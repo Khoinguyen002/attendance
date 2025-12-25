@@ -13,7 +13,11 @@ def create_app(config_object):
     # init extensions
     mongo.init_app(app)
     jwt.init_app(app)
-    cors.init_app(app)
+    cors.init_app(
+        app,
+        origins=app.config.get("CORS_ORIGINS"),
+        supports_credentials=app.config.get("CORS_SUPPORTS_CREDENTIALS", False),
+    )
 
     # register routes
     register_blueprints(app)

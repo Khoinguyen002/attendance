@@ -3,6 +3,12 @@ import os
 class Config:
     DEBUG = os.getenv("DEBUG", "true").lower() == "true"
     PORT = int(os.getenv("PORT", 5000))
+    CORS_ORIGINS = [
+        "http://localhost:5173",
+        "https://attendance-fe.dounus.id.vn",
+    ]
+
+    CORS_SUPPORTS_CREDENTIALS = True
 
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-secret")
 
