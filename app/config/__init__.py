@@ -5,7 +5,7 @@ class Config:
     PORT = int(os.getenv("PORT", 5000))
     CORS_ORIGINS = [
         "http://localhost:5173",
-        "https://attendance-fe.dounus.id.vn",
+        "https://attendance-fe.pages.dev",
     ]
 
     CORS_SUPPORTS_CREDENTIALS = True
