@@ -8,3 +8,5 @@ flask_cors
 bcrypt==4.3.0
 pytz
 openpyxl
+
+gunicorn
