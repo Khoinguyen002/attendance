@@ -2,10 +2,12 @@
 import bcrypt
 from pymongo import MongoClient
 
+from app.config import Config
+
 ADMIN_EMAIL = "admin@company.com"
 ADMIN_PASSWORD = "123456"
 
-client = MongoClient("mongodb://localhost:27017")
+client = MongoClient(Config.MONGO_URI)
 db = client.attendance
 
 hashed_password = bcrypt.hashpw(
