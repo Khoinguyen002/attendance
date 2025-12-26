@@ -1,11 +1,11 @@
 import bcrypt
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, decode_token
 from app.extensions.mongo import mongo
 
 
 def authenticate(email: str, password: str):
     user = mongo.db.employees.find_one(
-        {"email": email, "is_active": True}
+        {"email": email, "is_active": True, "role": {"$in": ["manager"]}}
     )
 
     if not user:
@@ -24,9 +24,13 @@ def authenticate(email: str, password: str):
             "email": user["email"]
         }
     )
+    
+    decoded = decode_token(access_token)
+    expires_at = decoded["exp"]  # unix timestamp (seconds)
 
     return {
         "access_token": access_token,
+        "expires_at": expires_at,
         "user": {
             "id": str(user["_id"]),
             "email": user["email"],

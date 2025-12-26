@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 
 class Config:
@@ -11,6 +12,9 @@ class Config:
     CORS_SUPPORTS_CREDENTIALS = True
 
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-secret")
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(
+        minutes=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES_MINUTES", 30))
+    )
 
     MONGO_URI = os.getenv(
         "MONGO_URI",
