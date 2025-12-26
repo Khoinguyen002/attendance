@@ -1,6 +1,6 @@
 import bcrypt
 import secrets
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
 
 from app.extensions.mongo import mongo
@@ -24,7 +24,7 @@ def create_employee(data: dict):
         "role": data.get("role", "employee"),
         "qr_secret": secrets.token_urlsafe(32),
         "is_active": True,
-        "created_at": datetime.utcnow()
+        "created_at": datetime.now(timezone.utc)
     }
 
     mongo.db.employees.insert_one(employee)

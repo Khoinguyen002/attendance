@@ -130,6 +130,7 @@ def export_monthly():
         "Status",
         "Late (min)",
         "Early (min)",
+        "Penalty (days)",
         "Worked (min)"
     ]
     ws.append(headers)
@@ -144,12 +145,17 @@ def export_monthly():
             r.get("status"),
             r.get("late_minutes", 0),
             r.get("early_minutes", 0),
+            r.get("penalty_days", 0),
             r.get("worked_minutes", 0),
         ])
 
     # Auto width
     for col in range(1, len(headers) + 1):
         ws.column_dimensions[get_column_letter(col)].width = 20
+        
+    # Total penalty days
+    total_penalty = sum(r.get("penalty_days", 0) for r in records)
+    ws.append(["", "", "", "", "TOTAL", "", "", total_penalty, ""])
 
     # ==== SAVE TO MEMORY ====
     output = BytesIO()
