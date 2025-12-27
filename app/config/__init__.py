@@ -1,13 +1,14 @@
 from datetime import timedelta
 import os
 
+def get_cors_origins():
+    raw = os.getenv("CORS_ORIGINS", "")
+    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+
 class Config:
     DEBUG = os.getenv("DEBUG", "true").lower() == "true"
     PORT = int(os.getenv("PORT", 5000))
-    CORS_ORIGINS = [
-        "http://localhost:5173",
-        "https://attendance-fe.pages.dev",
-    ]
+    CORS_ORIGINS = get_cors_origins()
 
     CORS_SUPPORTS_CREDENTIALS = True
 

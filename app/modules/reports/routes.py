@@ -7,6 +7,7 @@ from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 
 from app.common.decorators import role_required
+from app.common.utils import serialize_object_id
 from app.extensions.mongo import mongo
 
 report_bp = Blueprint("reports", __name__)
@@ -50,20 +51,38 @@ def report_monthly():
         user_id = ObjectId(claims.get("sub"))
         filters["employee_id"] = user_id
 
-    records = list(
-        mongo.db.attendance_daily.find(
-            filters,
-            {"_id": 0}
-        )
-    )
+    pipeline = [
+        {"$match": filters},
 
-    for r in records:
-        r["employee_id"] = str(r["employee_id"])
+        {
+            "$lookup": {
+                "from": "employees",
+                "localField": "employee_id",
+                "foreignField": "_id",
+                "as": "employee"
+            }
+        },
+
+        {"$unwind": "$employee"},
+
+        {
+            "$project": {
+                "_id": 0,
+                "employee.password": 0,
+                "employee.qr_secret": 0
+            }
+        },
+
+        {"$sort": {"date": -1}}
+    ]
+
+    result = list(mongo.db.attendance_daily.aggregate(pipeline))
+
 
     return {
         "month": month,
-        "total": len(records),
-        "records": records
+        "total": len(result),
+        "records": serialize_object_id(result)
     }, 200
 
 
