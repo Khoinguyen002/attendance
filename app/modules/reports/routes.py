@@ -2,6 +2,7 @@ from io import BytesIO
 from bson import ObjectId
 from flask import Blueprint, request, send_file
 
+from flask_jwt_extended import get_jwt
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 
@@ -36,15 +37,22 @@ def report_daily():
 
 
 @report_bp.get("/monthly")
-@role_required("manager")
+@role_required("manager", "employee")
 def report_monthly():
     month = request.args.get("month")
     if not month:
         return {"message": "month is required (YYYY-MM)"}, 400
+    
+    filters = {"date": {"$regex": f"^{month}"}}
+    claims = get_jwt()
+    user_role = claims.get("role")
+    if (user_role == "employee"):
+        user_id = ObjectId(claims.get("sub"))
+        filters["employee_id"] = user_id
 
     records = list(
         mongo.db.attendance_daily.find(
-            {"date": {"$regex": f"^{month}"}},
+            filters,
             {"_id": 0}
         )
     )

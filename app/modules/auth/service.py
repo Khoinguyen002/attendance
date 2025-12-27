@@ -5,7 +5,7 @@ from app.extensions.mongo import mongo
 
 def authenticate(email: str, password: str):
     user = mongo.db.employees.find_one(
-        {"email": email, "is_active": True, "role": {"$in": ["manager"]}}
+        {"email": email, "is_active": True}
     )
 
     if not user:
